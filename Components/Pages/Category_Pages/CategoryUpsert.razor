@@ -1,0 +1,103 @@
+﻿@page "/category/create"
+@page "/category/update/{Id:int}"
+
+@inject ICategoryRepository _categoryRepository
+@inject NavigationManager _navigationManager
+@inject IJSRuntime _js
+
+@if (isProcessing)
+{
+    <div class="position-absolute w-75 h-75 d-flex flex-column align-items-center bg-white justify-content-center">
+        <img src="./images/loading.gif" alt="loading" />
+    </div>
+}
+else
+{
+    <div class="card shadow bordere-0 mt-4">
+        <div class="card-header bg-black bg-gradient ml-0 py-1">
+            <div class="row">
+                <div class="col-20 text-center">
+                    <h2 class="text-white py-2">@(Id > 0 ? "Update " : "Create ")Category List</h2>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-4">
+            <EditForm Model="category" FormName="Category" OnValidSubmit="UpsertCategory">
+                <DataAnnotationsValidator />
+                <div class="border p-3 mt-4">
+                    <div class="form-floating py-3 col-12">
+                        <InputText id="name" class="form-control" @bind-Value="category.Name" />
+                        <label for="name">Name</label>
+                        <ValidationMessage For="(() => category.Name)" />
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-6 col-md-3">
+                            <a href="category" class="btn btn-secondary" disabled="@isProcessing">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                                </svg>
+                                Back
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <button type="submit" class="btn btn-primary" disabled="@isProcessing">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0 1 20.25 6v12A2.25 2.25 0 0 1 18 20.25H6A2.25 2.25 0 0 1 3.75 18V6A2.25 2.25 0 0 1 6 3.75h1.5m9 0h-9" />
+                                </svg>
+
+                                Update
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    [SupplyParameterFromForm(Name = "Category")]
+    private Category category { get; set; } = new Category();
+    public bool isProcessing { get; set; } = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await loadCategory();
+            isProcessing = false;
+            StateHasChanged();
+        }
+
+    }
+    private async Task loadCategory()
+    {
+        if (Id > 0)
+        {
+            category = await _categoryRepository.Get(Id);
+        }
+
+    }
+
+    private async Task UpsertCategory()
+    {
+        isProcessing = true;
+        if (Id == 0)
+        {
+            //create
+            await _categoryRepository.CreateAsync(category);
+            await _js.ToastrSuccess("Category Created Successfully");
+        }
+        else
+        {
+            //update
+            await _categoryRepository.UpdateAsync(category);
+            await _js.ToastrSuccess("Category Updated Successfully");
+        }
+        isProcessing = false;
+        _navigationManager.NavigateTo("category");
+    }
+}
