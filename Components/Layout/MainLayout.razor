@@ -3,7 +3,7 @@
 @inject AuthenticationStateProvider _authenticationStateProvider
 
 <div class="page">
-    <AuthorizeView Roles="@SD.Role_Customer">
+    <AuthorizeView Roles="@SD.Role_Admin">
         <div class="sidebar">
             <NavMenu />
         </div>
@@ -13,10 +13,7 @@
         {
             <NavBav></NavBav>
         }
-
-        <article class="content px-4">
             @Body
-        </article>
     </main>
 </div>
 
@@ -48,7 +45,7 @@
             return true;
         }
 
-        if (!user.IsInRole(SD.Role_Admin))
+        if (user.IsInRole(SD.Role_Admin))
         {
             return true;
         }

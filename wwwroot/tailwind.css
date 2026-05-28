@@ -7,13 +7,9 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
-    --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
-    --text-3xl: 1.875rem;
-    --text-3xl--line-height: calc(2.25 / 1.875);
-    --font-weight-bold: 700;
     --ease-out: cubic-bezier(0, 0, 0.2, 1);
     --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --default-transition-duration: 150ms;
@@ -459,9 +455,6 @@
   .mt-5 {
     margin-top: calc(var(--spacing) * 5);
   }
-  .mt-6 {
-    margin-top: calc(var(--spacing) * 6);
-  }
   .mt-auto {
     margin-top: auto;
   }
@@ -529,6 +522,9 @@
     width: calc(var(--spacing) * 6);
     height: calc(var(--spacing) * 6);
   }
+  .h-5 {
+    height: calc(var(--spacing) * 5);
+  }
   .h-25 {
     height: calc(var(--spacing) * 25);
   }
@@ -543,6 +539,9 @@
   }
   .h-auto {
     height: auto;
+  }
+  .w-5 {
+    width: calc(var(--spacing) * 5);
   }
   .w-25 {
     width: calc(var(--spacing) * 25);
@@ -847,6 +846,9 @@
   .text-end {
     text-align: end;
   }
+  .text-right {
+    text-align: right;
+  }
   .text-start {
     text-align: start;
   }
@@ -867,14 +869,6 @@
   }
   .align-top {
     vertical-align: top;
-  }
-  .text-3xl {
-    font-size: var(--text-3xl);
-    line-height: var(--tw-leading, var(--text-3xl--line-height));
-  }
-  .font-bold {
-    --tw-font-weight: var(--font-weight-bold);
-    font-weight: var(--font-weight-bold);
   }
   .text-nowrap {
     text-wrap: nowrap;
@@ -986,10 +980,6 @@
   syntax: "*";
   inherits: false;
   initial-value: solid;
-}
-@property --tw-font-weight {
-  syntax: "*";
-  inherits: false;
 }
 @property --tw-shadow {
   syntax: "*";
@@ -1127,7 +1117,6 @@
       --tw-skew-x: initial;
       --tw-skew-y: initial;
       --tw-border-style: solid;
-      --tw-font-weight: initial;
       --tw-shadow: 0 0 #0000;
       --tw-shadow-color: initial;
       --tw-shadow-alpha: 100%;
