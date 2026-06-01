@@ -3,7 +3,7 @@ using System;
 
 #nullable disable
 
-namespace YumBlazor.Migrations
+namespace EShop.Migrations
 {
     /// <inheritdoc />
     public partial class CreateIdentitySchema : Migration

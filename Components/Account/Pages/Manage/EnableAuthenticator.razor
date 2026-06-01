@@ -5,7 +5,7 @@
 @using System.Text
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
-@using YumBlazor.Data
+@using EShop.Data
 
 @inject UserManager<ApplicationUser> UserManager
 @inject UrlEncoder UrlEncoder
@@ -55,7 +55,7 @@ else
                                 <label for="Input.Code" class="control-label form-label">Verification Code</label>
                                 <ValidationMessage For="() => Input.Code" class="text-danger" />
                             </div>
-                            <button type="submit" class="w-100 btn btn-lg btn-primary">Verify</button>
+                            <button type="submit" class="btn btn-lg btn-primary w-100">Verify</button>
                             <ValidationSummary class="text-danger" role="alert" />
                         </EditForm>
                     </div>

@@ -1,6 +1,6 @@
 ﻿@page "/product/create"
 @page "/product/update/{Id:int}"
-@using YumBlazor.Components.Shared
+@using EShop.Components.Shared
 
 @inject IProductRepository _productRepository
 @inject ICategoryRepository _categoryRepository
@@ -172,7 +172,7 @@ else
         isProcessing = true;
         var file = e.File;
         //uploaded file with file name
-        FileInfo fileInfo = new(file.Name);
+        System.IO.FileInfo fileInfo = new(file.Name);
         //saved file with new name
         var newFileName = $"{Guid.NewGuid()}.{fileInfo.Extension}";
 

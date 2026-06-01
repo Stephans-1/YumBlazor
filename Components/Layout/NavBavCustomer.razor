@@ -1,19 +1,23 @@
-﻿@using YumBlazor.Components.Pages.Product_Pages
+﻿@using EShop.Components.Pages.Product_Pages
+
+@inject SharedStateService _sharedStateService
+@inject AuthenticationStateProvider _authenticationStateProvider
+@inject IShoppingCartRepository _ishoppingcartrepo
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark pt-4 pb-4">
     <div class="container-fluid">
         <a class="navbar-brand" href="">
             <img src="/images/Logo.png" alt="Bootstrap" width="30" height="24">
-            YumBlazor
+            EShop
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nfavbarCollapse"
                 aria-controls="navbarCollapse" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="navbar-collapse collapse" id="navbarCollapse">
             <ul class="navbar-nav mb-md-0 me-auto mb-2">
                 <li class="nav-item">
-                    <NavLink class="nav-link d-flex align-items-center gap-2" href="">
+                    <NavLink class="nav-link d-flex align-items-center gap-2" href="/" Match="NavLinkMatch.All">
                         <span class="bi bi-house-door" aria-hidden="true"></span>
                         <span>Home</span>
                     </NavLink>
@@ -26,7 +30,13 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                             </svg>
                         </span>
-                        <span>Cart</span>
+                        <span>Cart (@_sharedStateService.TotalCartCount)</span>
+                    </NavLink>
+                </li>
+                <li class="nav-item mx-2">
+                    <NavLink class="nav-link d-flex align-items-center gap-1" href="/order/list">
+                        <span></span>
+                        <span>Order List</span>
                     </NavLink>
                 </li>
             </ul>
@@ -34,11 +44,11 @@
             <ul class="d-flex navbar-nav mb-md-0 mb-2">
                 <AuthorizeView>
                     <Authorized>
-                        <li class="nav-item">
+                        <NavLink class="nav-item p-2" href="Account/Manage">
                             <button class="nav-link active me-2" style="cursor: pointer; background: transparent; border: 0px;">
                                 Welcome, @context?.User?.Identity?.Name
                             </button>
-                        </li>
+                        </NavLink>
                         <li class="nav-item">
                             <form action="Account/Logout" method="post">
                                 <AntiforgeryToken />
@@ -68,5 +78,24 @@
 </nav>
 
 @code {
-    private bool addedProduct = false;
+    protected async override Task OnInitializedAsync()
+    {
+        _sharedStateService.OnChange += userCartCountChange;
+        await GetCartCount();
+    }
+    private void userCartCountChange()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+    private void dispose()
+    {
+        _sharedStateService.OnChange -= userCartCountChange;
+    }
+    public async Task GetCartCount()
+    {
+        var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        _sharedStateService.TotalCartCount = 
+        await _ishoppingcartrepo.GetTotalCartItemCountAsync(user?.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value);
+    }
 }

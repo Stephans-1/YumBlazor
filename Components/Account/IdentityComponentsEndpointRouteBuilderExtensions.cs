@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.Security.Claims;
 using System.Text.Json;
-using YumBlazor.Components.Account.Pages;
-using YumBlazor.Components.Account.Pages.Manage;
-using YumBlazor.Data;
+using EShop.Components.Account.Pages;
+using EShop.Components.Account.Pages.Manage;
+using EShop.Data;
 
 namespace Microsoft.AspNetCore.Routing
 {

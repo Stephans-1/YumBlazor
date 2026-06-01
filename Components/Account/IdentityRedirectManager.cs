@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
-using YumBlazor.Data;
+using EShop.Data;
 
-namespace YumBlazor.Components.Account
+namespace EShop.Components.Account
 {
     internal sealed class IdentityRedirectManager(NavigationManager navigationManager)
     {

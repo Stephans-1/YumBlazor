@@ -1,4 +1,4 @@
-namespace YumBlazor.Components.Account
+namespace EShop.Components.Account
 {
     public enum PasskeyOperation
     {

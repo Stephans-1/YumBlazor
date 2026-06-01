@@ -3,7 +3,7 @@
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
-@using YumBlazor.Data
+@using EShop.Data
 
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager
@@ -14,10 +14,10 @@
 <PageTitle>Log in</PageTitle>
 
 <div class="mt-5" style="height: 100%;">
-    <div class="h-100 d-flex align-items-center justify-content-center">
+    <div class="d-flex align-items-center justify-content-center h-100">
         <div class="card bg-light" style="min-width: 28rem;">
             <div class="card-body">
-                <h5 class="card-title text-center display-6">Sign In</h5>
+                <h5 class="card-title display-6 text-center">Sign In</h5>
                 <StatusMessage Message="@errorMessage" />
                 <EditForm EditContext="editContext" method="post" OnSubmit="LoginUser" FormName="login">
                     <DataAnnotationsValidator />
@@ -42,7 +42,7 @@
                             </label>
                         </div>
                     </div>
-                    <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                    <button type="submit" class="btn btn-lg btn-primary w-100">Log in</button>
                     <div class="row">
                         <div class="col-6 pt-2">
                                 <a href="Account/ForgotPassword">Forgot your password?</a>
@@ -55,7 +55,7 @@
                 <br/>
                 <ExternalLoginPicker />
                 <hr />
-                <p class="text-center mt-2">
+                <p class="mt-2 text-center">
                     <small class="text-muted text-center">
                         Do you not have an account yet?
                         <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</a>

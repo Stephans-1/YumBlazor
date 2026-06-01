@@ -1,6 +1,6 @@
 ﻿@page "/Account/Manage/RenamePasskey/{Id}"
 
-@using YumBlazor.Data
+@using EShop.Data
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Identity
 @using System.Buffers.Text
@@ -26,7 +26,7 @@
         <ValidationMessage For="() => Input.Name" class="text-danger" />
     </div>
     <div>
-        <button type="submit" class="w-100 btn btn-lg btn-primary">Continue</button>
+        <button type="submit" class="btn btn-lg btn-primary w-100">Continue</button>
     </div>
 </EditForm>
 

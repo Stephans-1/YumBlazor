@@ -2,6 +2,11 @@
 
 @inject ICategoryRepository _categoryRepository
 @inject IProductRepository _productRepository
+@inject IShoppingCartRepository _cartRepository
+@inject SharedStateService _sharedStateService
+@inject AuthenticationStateProvider _authenticationStateProvider
+@inject NavigationManager _navigationManager
+@inject IJSRuntime _js
 
 <PageTitle>Home</PageTitle>
 @if (isProcessing)
@@ -15,7 +20,7 @@ else
     <div class="container-fluid full-width m-0 px-0">
         <div class="jumbotron-custom">
             <div class="d-flex align-items-center m-auto" style="width: 400px; height: 50vh;">
-
+                
                 <div class="d-flex align-items-center" style="width: 100%;">
                     <input type="text" class="form-control rounded-pill"
                            @bind:event="oninput" @bind:get="searchText" @bind:set="searchByProdName"
@@ -25,7 +30,6 @@ else
                 </div>
             </div>
         </div>
-
         <div class="content m-2 px-4">
             <ul class="nav nav-underline justify-content-center mb-2">
                 <li class="nav-item">
@@ -62,11 +66,12 @@ else
                             }
                             <div class="card-body">
                                 <h5 class="card-title lead text-success text-center">@prod.Name</h5>
-                                <h4 class="text-center">
-                                    <i class="bi bi-cart3 btn btn-success px-5 text-right" style="width:300px"> Add to cart</i>
-                                </h4>
                                 <p class="card-text mt-2">@((MarkupString)@prod.Description)</p>
-
+                                <h4 class="text-center">
+                                    <div class="m-auto p-2" @onclick="() => addOrderItem(prod)">
+                                    <i class="bi bi-cart3 btn btn-success form-control px-5 text-right" style="width:300px"> Add to cart</i>
+                                    </div>
+                                </h4>
                             </div>
                         </div>
                     </div>
@@ -99,10 +104,10 @@ else
     {
         Products = await _productRepository.GetAllAsync();
         Categories = await _categoryRepository.GetAllAsync();
-        filteredProducts(0);
+        await filteredProducts(0);
     }
 
-    private void filteredProducts(int categoryId)
+    private async Task filteredProducts(int categoryId)
     {
         if (categoryId == 0)
         {
@@ -134,5 +139,32 @@ else
     private string getActiveTabClass(int categoryId)
     {
         return categoryId == selectedCategoryId ? "active" : String.Empty;
+    }
+
+    private async Task addOrderItem(Product product)
+    {
+        var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var authenticated = user.Identity is not null && user.Identity.IsAuthenticated;
+
+        if (!authenticated)
+        {
+            _navigationManager.NavigateTo("/Account/Login");
+        }
+        else
+        {
+            var userId = user.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+            var result = await
+            _cartRepository.UpadateCartAsync(userId, product.Id, 1);
+            _sharedStateService.TotalCartCount = await _cartRepository.GetTotalCartItemCountAsync(userId);
+            if (result)
+            {
+                _js?.ToastrSuccess("Order Added To Cart Successfully");
+            }
+            else
+            {
+                _js?.ToastrError("An error occured Adding Order To Cart");
+            }
+        }
     }
 }

@@ -1,0 +1,39 @@
+﻿@page "/order/confirmation/{sessionId}"
+@using EShop.Utility
+
+@inject PaymentService _paymentService
+@inject IShoppingCartRepository _cartRepo
+
+@if (isProcessing)
+{
+    <div class="position-absolute d-flex flex-column align-items-center justify-content-center vh-100 w-100 bg-white">
+        <img src="./images/loading.gif" alt="loading" />
+    </div>
+}
+else
+{
+    <div class="text-center">
+        <h1 class="bg-green-400 pt-4">You are one step closer to delicious food!</h1>
+        <h3 class="pt-4">Your order is confirmed! Please note your order ID for any questions</h3>
+        <p>Order ID: <b>@orderHeader.Id</b></p>
+        <hr />
+        <img src="/images/lawn_leaf.jpg" width="40%" />
+        <hr />
+    </div>
+}
+@code {
+    [Parameter]
+    public string sessionId { get; set; }
+    private bool isProcessing { get; set; } = true;
+    private OrderHeader orderHeader { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        orderHeader = await _paymentService.CheckPaymentStatusAndUpdateOrder(sessionId);
+        if(orderHeader.Status == SD.StatusApproved)
+        {
+            await _cartRepo.ClearCartAsync(orderHeader.UserId);
+        }
+        isProcessing = false;
+    }
+}

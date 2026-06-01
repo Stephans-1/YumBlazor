@@ -1,0 +1,126 @@
+﻿@page "/order/list"
+@using System.Security.Claims
+@using EShop.Utility
+
+@inject IOrderRepository _orderRepository
+@inject NavigationManager _navigationManager
+@inject IJSRuntime _js
+
+@if (isProcessing)
+{
+    <div class="position-absolute d-flex flex-column align-items-center justify-content-center h-75 w-75 bg-white">
+        <img src="./images/loading.gif" alt="loading" />
+    </div>
+}
+else
+{
+    <div class="card bordere-0 mt-4 shadow">
+        <div class="card-header bg-gradient ml-0 bg-black py-1">
+            <div class="row">
+                <div class="col-20 text-center">
+                    <h2 class="py-2 text-white">Category List</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div clas="row pb-3">
+            @if (orderHeaders.Any())
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Phone Number</th>
+                            <th>Email</th>
+                            <th>Order Total</th>
+                            <th>Order Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var obj in orderHeaders)
+                        {
+                            <tr>
+                                <td>@obj.Id</td>
+                                <td>@obj.Name</td>
+                                <td>@obj.PhoneNumber</td>
+                                <td>@obj.Email</td>
+                                <td>@obj.OrderTotal</td>
+                                <td>@obj.OrderDate</td>
+                                <td>@obj.Status</td>
+                                <td>
+                                    <button @onclick="() => orderDetialsPD(obj.Id)" class="btn btn-primary">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                                            <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
+                                            <path d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
+                                        </svg>
+                                        Details
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [CascadingParameter]
+    public Task<AuthenticationState> authenticationState { get; set; }
+
+    public bool isProcessing { get; set; } = true;
+    private string? userId;
+    private bool isAdmin { get; set; } = false;
+
+    private IEnumerable<OrderHeader> orderHeaders { get; set; } = new List<OrderHeader>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await loadOrderHeaders();
+            isProcessing = false;
+            StateHasChanged();
+
+        }
+
+    }
+
+    private async Task loadOrderHeaders()
+    {
+        isProcessing = true;
+        StateHasChanged();
+        await checkAuthentication();
+        if (isAdmin == true)
+        {
+            orderHeaders = await _orderRepository.GetAllAsync();
+        }
+        else
+        {
+            orderHeaders = await _orderRepository.GetAllAsync(userId);
+        }
+        
+        isProcessing = false;
+    }
+
+    private async Task checkAuthentication()
+    {
+        var authState = await authenticationState;
+        var user = authState.User;
+
+        if (user is not null)
+        {
+            isAdmin = user?.IsInRole(SD.Role_Admin) ?? false;
+
+            userId = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
+    }
+    private void orderDetialsPD(int id)
+    {
+        _navigationManager.NavigateTo($"/order/details/{id}");
+    }
+}

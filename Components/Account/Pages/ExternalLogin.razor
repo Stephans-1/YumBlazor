@@ -6,7 +6,9 @@
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
-@using YumBlazor.Data
+@using EShop.Components.Account
+@using EShop.Data
+@using EShop.Utility
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
@@ -39,7 +41,7 @@
                 <label for="Input.Email" class="form-label">Email</label>
                 <ValidationMessage For="() => Input.Email" />
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            <button type="submit" class="btn btn-lg btn-primary w-100">Register</button>
         </EditForm>
     </div>
 </div>
@@ -154,6 +156,7 @@
         var result = await UserManager.CreateAsync(user);
         if (result.Succeeded)
         {
+            await UserManager.AddToRoleAsync(user, SD.Role_Customer);
             result = await UserManager.AddLoginAsync(user, externalLoginInfo);
             if (result.Succeeded)
             {

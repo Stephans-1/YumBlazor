@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using YumBlazor.Data;
-using YumBlazor.Repository.IRepository;
-using static YumBlazor.Repository.IRepository.IProductRepository;
+using EShop.Data;
+using EShop.Repository.IRepository;
+using static EShop.Repository.IRepository.IProductRepository;
 
-namespace YumBlazor.Repository
+namespace EShop.Repository
 {
     public class ProductRepository : IProductRepository
     {

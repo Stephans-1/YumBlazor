@@ -1,6 +1,6 @@
-﻿using YumBlazor.Data;
+﻿using EShop.Data;
 
-namespace YumBlazor.Repository.IRepository
+namespace EShop.Repository.IRepository
 {
     public interface ICategoryRepository
     {
